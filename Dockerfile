@@ -10,13 +10,15 @@ COPY package.json  ./
 # Install the dependencies
 RUN yarn install
 
-# Copy the rest of the application code
 COPY . .
 
 # Stage 2: Serve the application with Nginx (if applicable)
 FROM nginx:alpine
 
-# Copy the application (if no build step is needed)
+#reate the cache directories and set the permissions.
+RUN mkdir -p /var/cache/nginx/client_temp && \
+    chown -R nginx:nginx /var/cache/nginx
+
 COPY --from=builder /app /usr/share/nginx/html
 
 # Set environment variable if needed
@@ -27,3 +29,5 @@ EXPOSE 80
 
 # Command to run Nginx
 CMD ["nginx", "-g", "daemon off;"]
+
+
